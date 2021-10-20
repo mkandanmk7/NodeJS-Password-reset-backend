@@ -1,12 +1,18 @@
+const { ObjectId } = require("mongodb");
 const mongo = require("../Shared/mongo");
 
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
 
-const { reqisterSchema, registerSchema } = require("../Shared/schema");
+const {
+  reqisterSchema,
+  registerSchema,
+  loginSchema,
+} = require("../Shared/schema");
 
 const service = {
+  // register data service
   async register(req, res) {
     try {
       //validation using joi schema (value,error)
@@ -44,6 +50,48 @@ const service = {
       res.status(201).send("User registered successfully");
     } catch (err) {
       console.log("err in registration", err);
+    }
+  },
+
+  // login user service (JWT)
+  async login(req, res) {
+    try {
+      //joi loginschema validation
+      const { value, error } = await loginSchema.validate(req.body);
+
+      if (error)
+        return res.status(400).send({ Error: error.details[0].message });
+
+      //check first email exist;
+      const emailExist = await mongo.register.findOne({
+        email: req.body.email,
+      });
+      //not exist
+      if (!emailExist)
+        return res.status(404).send({ Alert: "User not found,Please Sign up" });
+
+      //check password valid or not bcrypt.campare
+      const passValid = await bcrypt.compare(
+        req.body.password,
+        emailExist.password
+      ); //compare with orignal pass and typed password;
+
+      if (!passValid)
+        return res.status(400).send({ Alert: "Enter the correctPassword" });
+
+      //gen Token using jwt
+      const token = jwt.sign(
+        {
+          userId: emailExist._id,
+        },
+        "muthu@123",
+        { expiresIn: "8h" }
+      );
+      console.log(token);
+
+      res.status(200).send({ Alert: "Login successfully", token: token });
+    } catch (err) {
+      console.log("error in login", err);
     }
   },
 };
