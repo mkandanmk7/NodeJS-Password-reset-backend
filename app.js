@@ -4,6 +4,8 @@ const express = require("express");
 
 const mongo = require("./Shared/mongo");
 
+const userRoute = require("./Routes/users.routes");
+
 const app = express();
 
 // IIFE here
@@ -17,6 +19,9 @@ const app = express();
       console.log("User middleware called");
       next();
     });
+
+    //routes
+    app.use("/users", userRoute);
 
     const PORT = 3001 || process.env.PORT;
 
