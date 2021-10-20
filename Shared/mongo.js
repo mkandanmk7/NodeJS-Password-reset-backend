@@ -10,7 +10,7 @@ const client = new MongoClient(URL);
 
 module.exports = {
   db: null,
-  user: null,
+  register: null,
 
   async connect() {
     await client.connect(); // obj function from db driver
@@ -18,6 +18,6 @@ module.exports = {
 
     this.db = client.db(DB_NAME);
     console.log("DB selected ", DB_NAME);
-    this.user = this.db.collection("register");
+    this.register = this.db.collection("register");
   },
 };
