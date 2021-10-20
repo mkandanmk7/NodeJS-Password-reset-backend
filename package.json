@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "node app.js",
+    "devStart": "nodemon app.js"
+  },
   "dependencies": {
     "bcrypt": "^5.0.1",
     "crypto": "^1.0.1",
