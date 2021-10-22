@@ -5,6 +5,7 @@ const express = require("express");
 const mongo = require("./Shared/mongo");
 
 const userRoute = require("./Routes/users.routes");
+const resetRoute = require("./Routes/resetPass.routes");
 
 const app = express();
 
@@ -22,6 +23,8 @@ const app = express();
 
     //routes
     app.use("/users", userRoute);
+
+    app.use("/resetpassword", resetRoute);
 
     const PORT = 3001 || process.env.PORT;
 
