@@ -95,7 +95,7 @@ const service = {
 
       console.log("new pass: ", hashPass);
       
-      const data=await mongo.register.findOneAndUpdate({_id: ObjectId(req.params.userId)},{$set:{password:hashPass},{$unset:{resetToken:1,resetExpire:1}},{ReturnDocument:"after"});
+      const data=await mongo.register.findOneAndUpdate({_id: ObjectId(req.params.userId)},$set:{password:hashPass},{$unset:{resetToken:1,resetExpire:1}},{ReturnDocument:"after"});
       console.log(data);
       res.status(200).send({message:"password updated successfully"});
 
