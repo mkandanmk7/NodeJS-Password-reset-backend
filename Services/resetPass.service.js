@@ -28,7 +28,7 @@ const service = {
     console.log(token);
     //generation hash reset token
     let hashToken = await bcrypt.hash(token, Number(12));
-    console.log("reset token is:");
+
     console.log("hashTOken: ", hashToken);
     //expiry timing for 1 hour
     let expiry = new Date(Date.now() + 1 * 3600 * 1000);
@@ -45,6 +45,26 @@ const service = {
     res
       .status(200)
       .send({ message: "Link sent to email", resetToken: hashToken });
+  },
+
+  //verify resetToken and expiry time
+  async verifyToken(req, res, next) {
+    const userExist = await mongo.register.findOne({
+      _id: ObjectId(req.params.userId),
+    });
+    console.log("verify token :", userExist);
+
+    const token = req.params.token;
+
+    console.log("token:", token);
+
+    //verifing token compare to db resetToken
+    const isValid = await bcrypt.compare(token, userExist.resetToken);
+
+    // verify expiry timing
+    const isExpired = userExist.resetExpire > Date.now();
+
+    console.log("current time", Date.now);
   },
 };
 
