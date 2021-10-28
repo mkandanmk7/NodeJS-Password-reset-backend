@@ -7,9 +7,8 @@ router.post("/", service.sendToken);
 
 //verify resetToken and expiry time
 
-router.post("/", service.verifyToken);
+router.post("/:userId/:token", service.verifyToken);
 
-// get token and verifing;
-// router.get("/:userId/:token",service.verifyToken);
+router.post("/:userId/:token", service.verifyAndUpdatePassword);
 
 module.exports = router;
