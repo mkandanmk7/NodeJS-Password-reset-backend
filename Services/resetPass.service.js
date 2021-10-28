@@ -77,31 +77,39 @@ const service = {
   },
 
   async verifyAndUpdatePassword(req, res, next) {
-    let userExist=await mongo.register.findOne({_id:ObjectId(req.params.userId)});
-    if(!userExist.resetToken) return res.status(400).send("invalid link or expired");
+    let userExist = await mongo.register.findOne({
+      _id: ObjectId(req.params.userId),
+    });
+    if (!userExist.resetToken)
+      return res.status(400).send("invalid link or expired");
 
-    const token=req.params.token;
+    const token = req.params.token;
 
-    const isValid=await bcrypt.compare(token,userExist.resetToken);
+    const isValid = await bcrypt.compare(token, userExist.resetToken);
 
+    const isExpired = userExist.resetExpire > Date.now(); //ex  expiry time is 10am , current time is 10.01 am . false
 
-    const isExpired= userExist.resetExpire>Date.now(); //ex  expiry time is 10am , current time is 10.01 am . false
+    console.log(
+      `Current time : ${Date.now()} , expiry time is : ${userExist.resetExpire}`
+    );
 
-    console.log(`Current time : ${Date.now()} , expiry time is : ${userExist.resetExpire}`);
-
-    if(isValid && isExpired){
-      const password=req.body.password;
-      const hashPass=await bcrypt.hash(password,Number(12));
+    if (isValid && isExpired) {
+      const password = req.body.password;
+      const hashPass = await bcrypt.hash(password, Number(12));
 
       console.log("new pass: ", hashPass);
-      
-      const data=await mongo.register.findOneAndUpdate({_id: ObjectId(req.params.userId)},$set:{password:hashPass},{$unset:{resetToken:1,resetExpire:1}},{ReturnDocument:"after"});
+      //new password updated to db with encrpted
+      const data = await mongo.register.findOneAndUpdate(
+        { _id: ObjectId(req.params.userId) },
+        {
+          $set: { password: hashPass },
+          $unset: { resetToken: 1, resetExpire: 1 },
+        },
+        { ReturnDocument: "after" }
+      );
       console.log(data);
-      res.status(200).send({message:"password updated successfully"});
-
-    }
-    else res.status(400).send("Invalid link or expired")
-   
+      res.status(200).send({ message: "password updated successfully" });
+    } else res.status(400).send("Invalid link or expired");
   },
 };
 
