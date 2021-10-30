@@ -1,15 +1,11 @@
-const { ObjectId } = require("mongodb");
+// const { ObjectId } = require("mongodb");
 const mongo = require("../Shared/mongo");
 
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
 
-const {
-  reqisterSchema,
-  registerSchema,
-  loginSchema,
-} = require("../Shared/schema");
+const { registerSchema, loginSchema } = require("../Shared/schema");
 
 const service = {
   // register data service
@@ -84,7 +80,7 @@ const service = {
         {
           userId: emailExist._id,
         },
-        "muthu@123",
+        process.env.JWT_SECRET_KEY,
         { expiresIn: "8h" }
       );
       console.log(token);
