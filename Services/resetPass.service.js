@@ -2,7 +2,7 @@ const mongo = require("../Shared/mongo");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendMail = require("../Shared/sendMailer");
-const { ObjectId, ReturnDocument } = require("mongodb"); //driver
+const { ObjectId } = require("mongodb"); //driver
 
 const service = {
   async sendToken(req, res, next) {
@@ -23,10 +23,10 @@ const service = {
       console.log(data);
     }
 
-    // create string for hashing pass;
+    // create string for hashing pass; like joi salt;
     let token = crypto.randomBytes(32).toString("hex");
     console.log(token);
-    //generation hash reset token
+    //generation hash reset token : it will store in db
     let hashToken = await bcrypt.hash(token, Number(12));
 
     console.log("hashTOken: ", hashToken);
@@ -42,6 +42,9 @@ const service = {
     );
     console.log(data);
 
+    const link = `https://gracious-keller-611545.netlify.app/resetPassword/${userExist._id}/${token}`;
+
+    await sendMail(userExist.email, "password Reset", link);
     res.status(200).send({
       message: "Link sent to email",
       Id: data.value._id,
