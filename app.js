@@ -30,9 +30,9 @@ const app = express();
 
     app.use("/resetpassword", resetRoute);
 
-    const PORT = 3001 || process.env.PORT;
+    const port = 3001 || process.env.PORT;
 
-    app.listen(PORT, () => console.log(`server running in port ${PORT}`));
+    app.listen(port, () => console.log(`server running in port ${port}`));
   } catch (err) {
     console.log("err in connection");
   }

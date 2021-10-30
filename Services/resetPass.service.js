@@ -54,10 +54,15 @@ const service = {
 
   //verify resetToken and expiry time
   async verifyToken(req, res, next) {
+    //get user details
     const userExist = await mongo.register.findOne({
       _id: ObjectId(req.params.userId),
     });
+
     console.log("verify token :", userExist);
+
+    //if use not exist
+    if (!userExist) return res.status(400).send("invalid link or Expired");
 
     const token = req.params.token;
 
