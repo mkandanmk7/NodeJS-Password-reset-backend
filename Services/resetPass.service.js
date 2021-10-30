@@ -42,7 +42,7 @@ const service = {
     );
     console.log(data);
 
-    const link = `https://gracious-keller-611545.netlify.app/resetPassword/${userExist._id}/${token}`;
+    const link = `https://reset-password-muthu.herokuapp.com/resetPassword/${userExist._id}/${token}`;
 
     await sendMail(userExist.email, "password Reset", link);
     res.status(200).send({
