@@ -1,8 +1,8 @@
 const { MongoClient } = require("mongodb");
 
-const URL = "mongodb://localhost:27017";
-const DB_NAME = "password";
-// const URL = process.env.URL;
+// const URL = "mongodb://localhost:27017";
+const DB_NAME = process.env.DB_NAME;
+const URL = process.env.URL;
 // const DB_NAME = process.env.DB_NAME;
 
 const client = new MongoClient(URL);

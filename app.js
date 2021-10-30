@@ -1,4 +1,6 @@
-// require("dotenv").config();
+require("dotenv").config();
+
+const cors = require("cors");
 
 const express = require("express");
 
@@ -13,6 +15,8 @@ const app = express();
 (async () => {
   try {
     await mongo.connect(); //connection db
+
+    app.use(cors());
 
     app.use(express.json()); //parsing string to json
 
