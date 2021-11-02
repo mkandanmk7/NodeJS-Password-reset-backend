@@ -32,9 +32,6 @@ const service = {
     console.log("hashTOken: ", hashToken);
     console.log("token : ", token);
 
-    const dummy = await bcrypt.compare(token, hashToken);
-    console.log(dummy);
-
     //expiry timing for 1 hour
     let expiry = new Date(Date.now() + 1 * 3600 * 1000); //returns miliseconds
     console.log(expiry);
@@ -47,7 +44,7 @@ const service = {
     );
     console.log(data);
 
-    const link = `https://reset-password-muthu.herokuapp.com/resetPassword/${userExist._id}/${token}`;
+    const link = `https://reset-password-muthu.herokuapp.com/resetpassword/${userExist._id}/${token}`;
 
     await sendMail(userExist.email, "password Reset", link);
     res.status(200).send({
@@ -90,8 +87,8 @@ const service = {
   },
 
   async verifyAndUpdatePassword(req, res, next) {
-    console.log("in update");
-    console.log(req.params.userId);
+    // console.log("in update");
+    // console.log(req.params.userId);
     let userExist = await mongo.register.findOne({
       _id: ObjectId(req.params.userId),
     });
@@ -102,21 +99,18 @@ const service = {
     }
 
     const token = req.params.token;
-    console.log("token from url:", token);
-    console.log("token from db:", userExist.resetToken);
+    // console.log("token from url:", token);
+    // console.log("token from db:", userExist.resetToken);
 
-    const isValid = await bcrypt.compare(token, userExist.resetToken);
-
-    // let isValid;
-    // if (token === userExist.resetToken) isValid = true;
+    const isValid = await bcrypt.compare(token, userExist.resetToken); //return true of false
 
     console.log(isValid);
 
     const isExpired = userExist.resetExpire > Date.now(); //ex  expiry time is 10am , current time is 10.01 am . false
-    console.log("output:", isValid, isExpired);
-    console.log(
-      `Current time : ${Date.now()} , expiry time is : ${userExist.resetExpire}`
-    );
+    // console.log("output:", isValid, isExpired);
+    // console.log(
+    //   `Current time : ${Date.now()} , expiry time is : ${userExist.resetExpire}`
+    // );
 
     if (isValid && isExpired) {
       const password = req.body.password;
