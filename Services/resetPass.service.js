@@ -25,13 +25,18 @@ const service = {
 
     // create string for hashing pass; like joi salt;
     let token = crypto.randomBytes(32).toString("hex");
-    console.log(token);
+    // console.log(token);
     //generation hash reset token : it will store in db
     let hashToken = await bcrypt.hash(token, Number(12));
 
     console.log("hashTOken: ", hashToken);
+    console.log("token : ", token);
+
+    const dummy = await bcrypt.compare(token, hashToken);
+    console.log(dummy);
+
     //expiry timing for 1 hour
-    let expiry = new Date(Date.now() + 1 * 3600 * 1000);
+    let expiry = new Date(Date.now() + 1 * 3600 * 1000); //returns miliseconds
     console.log(expiry);
 
     //updating resetToken and expiry time to user details;
@@ -62,7 +67,7 @@ const service = {
     console.log("verify token :", userExist);
 
     //if use not exist
-    if (!userExist) return res.status(400).send("invalid link or Expired");
+    if (!userExist) return res.status(400).send("invalid  or Expired");
 
     const token = req.params.token;
 
@@ -85,18 +90,30 @@ const service = {
   },
 
   async verifyAndUpdatePassword(req, res, next) {
+    console.log("in update");
+    console.log(req.params.userId);
     let userExist = await mongo.register.findOne({
       _id: ObjectId(req.params.userId),
     });
-    if (!userExist.resetToken)
-      return res.status(400).send("invalid link or expired");
+    console.log(userExist);
+    // console.log(userExist.resetToken);
+    if (!userExist.resetToken) {
+      return res.status(400).send("invalid token");
+    }
 
     const token = req.params.token;
+    console.log("token from url:", token);
+    console.log("token from db:", userExist.resetToken);
 
     const isValid = await bcrypt.compare(token, userExist.resetToken);
 
-    const isExpired = userExist.resetExpire > Date.now(); //ex  expiry time is 10am , current time is 10.01 am . false
+    // let isValid;
+    // if (token === userExist.resetToken) isValid = true;
 
+    console.log(isValid);
+
+    const isExpired = userExist.resetExpire > Date.now(); //ex  expiry time is 10am , current time is 10.01 am . false
+    console.log("output:", isValid, isExpired);
     console.log(
       `Current time : ${Date.now()} , expiry time is : ${userExist.resetExpire}`
     );

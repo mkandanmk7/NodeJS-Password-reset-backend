@@ -6,9 +6,8 @@ const service = require("../Services/resetPass.service");
 router.post("/", service.sendToken);
 
 //verify resetToken and expiry time
+router.post("/:userId/:token", service.verifyAndUpdatePassword);
 
 router.get("/:userId/:token", service.verifyToken);
-
-router.post("/:userId/:token", service.verifyAndUpdatePassword);
 
 module.exports = router;

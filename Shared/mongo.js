@@ -5,7 +5,7 @@ const DB_NAME = process.env.DB_NAME;
 const URL = process.env.URL;
 // const DB_NAME = process.env.DB_NAME;
 
-const client = new MongoClient(URL);
+const client = new MongoClient(URL); //obj literals
 // console.log(URL);
 
 module.exports = {
@@ -18,6 +18,6 @@ module.exports = {
 
     this.db = client.db(DB_NAME);
     console.log("DB selected ", DB_NAME);
-    this.register = this.db.collection("register");
+    this.register = this.db.collection("register"); //collection choose
   },
 };
